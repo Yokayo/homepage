@@ -11,6 +11,8 @@ body{
     max-width: 20%;
     font-size: .9em;
     display: inline-block;
+    margin: 0px;
+    position: relative;
 }
 
 .sidebar_item{
@@ -42,4 +44,15 @@ body{
     border: 1px solid #808387;
     width: 50%;
     display: none;
+    vertical-align: top;
+    font-family: Verdana, Arial;
+}
+
+.main_text{
+    vertical-align: top;
+}
+
+.image{
+    margin: 5px;
+    float: right;
 }
