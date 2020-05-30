@@ -10,6 +10,14 @@ function main(){ // инициализация
     else
         currentID = 0;
     currentSection = '';
+    var d = new XMLHttpRequest();
+    d.open('GET', '/info/persons?type=fullname&userid=' + currentID); // загрузка имени
+    d.send();
+    d.onreadystatechange = function(){
+        if(!checkReady(this))
+            return;
+        document.title = JSON.parse(this.responseText).Name;
+    }
     loadModule('base'); // зарузка модуля "кратко обо мне"
     $(".bg_link").click(function(){ // коллбэки для кнопок
         loadModule('bg');
