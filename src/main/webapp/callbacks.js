@@ -17,7 +17,8 @@ function main(){ // инициализация
         loadModule('base');
     });
     $(".skills_link").click(function(){
-        loadModule('skills');});
+        loadModule('skills');
+    });
 }
     
 function loadModule(name){ // функция загрузки модулей
