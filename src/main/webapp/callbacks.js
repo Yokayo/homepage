@@ -11,26 +11,21 @@ function main(){ // инициализация
         currentID = 0;
     loadModule('base'); // зарузка модуля "кратко обо мне"
     $(".bg_link").click(function(){ // коллбэки для кнопок
-        if(currentSection == 'bg')
-            return;
-        $(".main_section").fadeOut(50, function(){});
         loadModule('bg');
     });
     $(".base_link").click(function(){
-        if(currentSection == 'base')
-            return;
-        $(".main_section").fadeOut(50, function(){});
         loadModule('base');
     });
     $(".skills_link").click(function(){
-        if(currentSection == 'skills')
-            return;
-        $(".main_section").fadeOut(50, function(){});
         loadModule('skills');});
 }
     
 function loadModule(name){ // функция загрузки модулей
     var d = new XMLHttpRequest();
+    $(".main_section").fadeOut(50, function(){});
+    if(currentSection == name){
+        return;
+    }
     switch(name){
         case 'base':
             d.open('GET', '/info/persons?type=brief&userid=' + currentID);
