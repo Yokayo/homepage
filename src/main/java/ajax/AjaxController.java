@@ -16,13 +16,13 @@ import coreContext.*;
 public class AjaxController{
     
     @Inject private DataCache cache;
-    
+    // передача данных по ID и типу
     @RequestMapping(value = "persons", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<String> passInfo(HttpServletRequest request){
         String infoType = request.getParameter("type");
         JsonObjectBuilder builder = Json.createObjectBuilder();
         if(infoType == null){
-            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         StringWriter result = new StringWriter();
         JsonWriter writer = Json.createWriter(result);
@@ -31,7 +31,7 @@ public class AjaxController{
             personID = "0";
         Person person = cache.getPersonByID(personID);
         if(person == null){
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         switch(infoType){
             case "brief":
@@ -59,7 +59,7 @@ public class AjaxController{
                 writer.write(builder.build());
                 break;
         }
-        return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
     }
     
 }

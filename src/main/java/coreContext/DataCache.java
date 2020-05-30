@@ -9,54 +9,53 @@ import javax.annotation.PostConstruct;
 
 public class DataCache{
     
-    private HashMap<String, Person> persons = new HashMap<>();
+    private HashMap<String, Person> persons = new HashMap<>(); // можно ретривить людей по ID
     
-    @PostConstruct
+    @PostConstruct // инициализация кэша (загрузка данных из БД)
     public void init(){
          try{
              Class.forName("org.postgresql.Driver"); // почему-то сам не регистрируется
-         }catch(Exception e){e.printStackTrace(System.out);}
+         }catch(Exception e){
+             e.printStackTrace(System.out);
+         }
          Properties connection_props = new Properties();
          connection_props.put("user", "postgres");
          connection_props.put("password", "password_here");
-         int personsCounter = 0;
+         int personsCounter = 0; // делаем перебором, с возможностью добавлять новых пользователей
          try(Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", connection_props)){
              String query = "SELECT * FROM persons WHERE id = ?";
              PreparedStatement dataQuery = con.prepareStatement(query);
              query = "SELECT * FROM skills WHERE id = ?";
              PreparedStatement skillsQuery = con.prepareStatement(query);
              dataQuery.setInt(1, personsCounter);
-             ResultSet rs = dataQuery.executeQuery();
-             System.out.println("Connected");
+             ResultSet personData = dataQuery.executeQuery();
              Person person = null;
-             while(rs.isBeforeFirst()){
-                 while(rs.next()){
+             while(personData.isBeforeFirst()){ // перебор людей в базе
+                 while(personData.next()){
                      skillsQuery.setInt(1, personsCounter);
                      ResultSet skillsData = skillsQuery.executeQuery();
                      ArrayList<Skill> skills = new ArrayList<>();
-                     while(skillsData.next()){
+                     while(skillsData.next()){ // наполнение массива навыков
                          skills.add(new Skill(skillsData.getString("type"), skillsData.getString("skill")));
                      }
-                     person = new Person(
-                         String.valueOf(rs.getInt("id")),
-                         rs.getString("name"),
-                         rs.getString("surname"),
-                         rs.getString("brief"),
-                         rs.getString("bg"),
+                     person = new Person( // вот и новый объект в кэше
+                         String.valueOf(personData.getInt("id")),
+                         personData.getString("name"),
+                         personData.getString("surname"),
+                         personData.getString("brief"),
+                         personData.getString("bg"),
                          skills.toArray(new Skill[skills.size()])
                      );
-                     persons.put(person.getID(), person);
-                     System.out.println(rs.getString("name") + " " + rs.getString("surname"));
+                     persons.put(person.getID(), person); // в карту его
                  }
-                 personsCounter ++;
+                 personsCounter ++; // следующий индекс
                  dataQuery.setInt(1, personsCounter);
-                 rs = dataQuery.executeQuery();
+                 personData = dataQuery.executeQuery();
              }
          }catch(Exception e){
-             e.printStackTrace(System.out);
-         }
-         System.out.println();
-    }
+             e.printStackTrace(System.out); // куда-то делось соединение с базой
+         } // можно было бы в таком случае каждый раз делать запрос отдельно, в принципе
+    }      // но это слишком затратно, нужен пулинг соединений. А я не уверен, что успел бы с ним
     
     public Person getPersonByID(String id){
         return persons.get(id);
