@@ -9,6 +9,7 @@ function main(){ // инициализация
     }
     else
         currentID = 0;
+    currentSection = '';
     loadModule('base'); // зарузка модуля "кратко обо мне"
     $(".bg_link").click(function(){ // коллбэки для кнопок
         loadModule('bg');
